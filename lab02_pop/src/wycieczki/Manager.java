@@ -42,6 +42,8 @@ public class Manager {
 	}
 
 	static int det1(int [] var, List<Grupa> gs, List<Wycieczka> ws ) {
+		if(!isValid(var, gs, ws))
+			return -1;
 		int d1 = 0;
 		int d1max = 10;
 		for (int i = 0; i < var.length; i++) {
@@ -65,6 +67,8 @@ public class Manager {
 	}
 	
 	static int det3(int [] var, List<Grupa> gs, List<Wycieczka> ws ) {
+		if(!isValid(var, gs, ws))
+			return -1;
 		int d3 = 0;
 		int d1max = 10;
 		for (int i = 0; i < var.length; i++) {
@@ -81,26 +85,22 @@ public class Manager {
 	}
 	
 	static int det4(int [] var, List<Grupa> gs, List<Wycieczka> ws ) {
-		int d1 = 0;
-		int d1max = 10;
+		if(!isValid(var, gs, ws))
+			return -1;
+		int d3 = 0;
+		
+		int d1max = 100;
 		for (int i = 0; i < var.length; i++) {
 			// d1 1. kryteruim
 			if(var[i] < ws.size()) {
-				String cel = ws.get(var[i]).cel;
-				
-				int pref;
-				if(gs.get(i).preferencje.contains(cel)) {
-					pref = gs.get(i).preferencje.indexOf(cel);
-					int l = gs.get(i).licznosc;
-					d1 += l * d1max/(pref+1);
-				}
-				else { 
-					d1 += 0;						
-				}
+				int koszt = ws.get(var[i]).cena * gs.get(i).licznosc;
+				d3 += d1max - koszt;
 			}
-			else d1 = 0;
+			else { 
+				d3 += 0;
+			}
 		}
-		return d1;
+		return d3;
 	}
 
 }
