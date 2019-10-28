@@ -61,24 +61,23 @@ public class Main {
 			int[] var = x.getNextVar();
 			vars[i++] = var;	  
 		}	
-		while(i>0) {
-			i--;
-			for (int j = 0; j < vars[i].length; j++) {
-				System.out.print(vars[i][j] + " ");
-			}					
-			System.out.println(Manager.det(vars[i], gs, ws));	
-			System.out.println();
-			
-		}
-//		for(int i1=0; i1< vars.length; i1++) {
-//			for (int j = 0; j < vars[i1].length; j++) {
-//				//System.out.print(vars[i1][j]+" ");
-//			}				
-//			System.out.print(vars[i1]);
-//
-//			System.out.println(Manager.det(vars[i1], gs, ws));	
-//			System.out.println();	
+//		while(i>0) {
+//			i--;
+//			for (int j = 0; j < vars[i].length; j++) {
+//				System.out.print(vars[i][j] + " ");
+//			}					
+//			System.out.println(Manager.det(vars[i], gs, ws));	
+//			System.out.println();
+//			
 //		}
+		for(int i1=0; i1< vars.length; i1++) {
+			for (int j = 0; j < vars[i1].length; j++) {
+				System.out.print(vars[i1][j]+" ");
+			}
+
+			System.out.println(Manager.det(vars[i1], gs, ws));	
+			System.out.println();	
+		}
 
 		System.out.println("a");
 	}
