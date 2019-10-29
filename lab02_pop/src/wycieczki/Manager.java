@@ -2,6 +2,7 @@ package wycieczki;
 
 import java.util.List;
 
+
 public class Manager {
 	
 	static boolean isValid(int [] var, List<Grupa> gs, List<Wycieczka> ws) {
@@ -54,8 +55,8 @@ public class Manager {
 				int pref;
 				if(gs.get(i).preferencje.contains(cel)) {
 					pref = gs.get(i).preferencje.indexOf(cel);
-					int l = gs.get(i).licznosc;
-					d1 += l * d1max/(pref+1);
+					int li = gs.get(i).licznosc;
+					d1 += li * d1max/(pref+1);
 				}
 				else { 
 					d1 += 0;						
@@ -66,11 +67,31 @@ public class Manager {
 		return d1;
 	}
 	
+	//kryterium minimum
+	static int det2(int [] var, List<Grupa> gs, List<Wycieczka> ws ) {
+		if(!isValid(var, gs, ws))
+			return Integer.MAX_VALUE;
+		int d2 = 0;
+		for (int i = 0; i < var.length; i++) {
+			// d1 1. kryteruim
+			int li = gs.get(i).licznosc;
+			d2 += li;
+			if(var[i] < ws.size()) {
+				String cel = ws.get(var[i]).cel;
+				if(gs.get(i).preferencje.contains(cel) ) {
+				
+					d2 -= 1*li;						
+				}
+			}
+			
+		}
+		return d2;
+	}
+	
 	static int det3(int [] var, List<Grupa> gs, List<Wycieczka> ws ) {
 		if(!isValid(var, gs, ws))
 			return -1;
 		int d3 = 0;
-		int d1max = 10;
 		for (int i = 0; i < var.length; i++) {
 		//d3 3. kryterium
 			if(var[i] < ws.size()) {
@@ -84,17 +105,19 @@ public class Manager {
 		return d3;
 	}
 	
+	//kryterium maximum
 	static int det4(int [] var, List<Grupa> gs, List<Wycieczka> ws ) {
 		if(!isValid(var, gs, ws))
 			return -1;
 		int d3 = 0;
 		
-		int d1max = 100;
+		int d1max = 100000;
 		for (int i = 0; i < var.length; i++) {
 			// d1 1. kryteruim
 			if(var[i] < ws.size()) {
 				int koszt = ws.get(var[i]).cena * gs.get(i).licznosc;
-				d3 += d1max - koszt;
+				int wynik = gs.get(i).licznosc * d1max - koszt;
+				d3 += wynik;
 			}
 			else { 
 				d3 += 0;

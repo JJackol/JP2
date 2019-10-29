@@ -1,2 +1,5 @@
 Egipt	12	3000
 Grecja	34	2500
+Turcja	34	2000
+USA	34	5000
+Polska	30	500
