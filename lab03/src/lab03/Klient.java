@@ -3,11 +3,14 @@
  */
 package lab03;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 /**
  * @author jaca
  *
  */
-public class Klient {
+public class Klient implements GetRecordI{
 	private int id;
 	private String imie;
 	private String nazwisko;
@@ -21,8 +24,30 @@ public class Klient {
 		this.pesel = pesel;
 	}
 	
+	public Klient(String csv_line) {
+		super();
+		
+		
+		String strs[] = csv_line.split(",");
+		
+		this.id = Integer.parseInt(strs[0]);
+		this.imie = strs[1];
+		this.nazwisko = strs[2];
+		this.pesel = strs[3];
+		
+	}
+	
+	@Override
 	public String getRecord() {
-		return "";
+		StringBuilder builder = new StringBuilder();
+		builder.append(id);
+		builder.append(',');
+		builder.append(imie);
+		builder.append(',');
+		builder.append(nazwisko);
+		builder.append(',');
+		builder.append(pesel);
+		return builder.toString();
 	}
 
 	
