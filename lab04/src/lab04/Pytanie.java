@@ -44,6 +44,17 @@ public class Pytanie {
 	
 	}
 	
+	public Pytanie(Pytanie pytanie) {
+
+		this.nazwa = pytanie.nazwa;
+		this.tresc = pytanie.tresc;
+		this.A = pytanie.A;
+		this.B = pytanie.B;
+		this.C = pytanie.C;
+		this.D = pytanie.D;
+		this.poprawna = pytanie.poprawna;
+		// TODO Auto-generated constructor stub
+	}
 	public void zapisz(String nazwa, String tresc, String a, String b, String c, String d, String poprawna) {
 		
 		this.nazwa = nazwa;
@@ -53,5 +64,10 @@ public class Pytanie {
 		this.C = c;
 		this.D = d;
 		this.poprawna = poprawna;
+	}
+	
+	public Pytanie copy() {
+		
+		return new Pytanie(this);
 	}	
 }
