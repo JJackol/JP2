@@ -6,7 +6,10 @@ import javax.swing.JFrame;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.ButtonModel;
+import javax.swing.ComboBoxModel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
+
 import java.awt.List;
 import javax.swing.JButton;
 import java.awt.BorderLayout;
@@ -30,13 +33,22 @@ import java.awt.event.ContainerEvent;
 import java.awt.event.ContainerListener;
 import java.awt.event.ActionEvent;
 import javax.swing.event.ChangeListener;
+
+
 import javax.swing.event.ChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.lang.ProcessBuilder.Redirect;
+import java.util.ArrayList;
+import java.util.Scanner;
 import java.beans.PropertyChangeEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 import javax.swing.JTextField;
+import javax.swing.JComboBox;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class Window {
 	
@@ -56,6 +68,10 @@ public class Window {
 	JRadioButton rdbtnD;
 	int pyt_sel=0;
 	private JTextField textField;
+	private JButton btnZapiszbaze;
+	private JComboBox comboBox;
+	private String name;
+	private JButton btnNowaBaza;
 	/**
 	 * Launch the application.
 	 */
@@ -79,6 +95,28 @@ public class Window {
 		initialize();
 	}
 
+	ArrayList<String> loadBazy() {
+		//String[] lista;
+		ArrayList<String> listaBaz = new ArrayList<String>();
+		try
+		{
+			File f = new File("Bazy.csv");
+			Scanner s = new Scanner(f);
+			String str;
+	        while(s.hasNextLine()){
+	            str = s.nextLine();
+	            if (!str.isEmpty())
+	            	listaBaz.add(str);
+					//comboBox.add(Component(String name = new String(str););
+	        }
+	        s.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return listaBaz;
+	}
+	
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -139,6 +177,45 @@ public class Window {
 			}
 			
 		});
+		
+		
+		ArrayList<String> bazy = loadBazy();
+		String[] array = bazy.toArray(new String[bazy.size()]);
+		
+		comboBox = new JComboBox( array );
+		comboBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				String plik = (String) comboBox.getSelectedItem();
+				baza = new BazaPytan(plik, true);
+			}
+		});
+		toolBar.add(comboBox);
+		
+		btnZapiszbaze = new JButton("ZapiszBaze");
+		btnZapiszbaze.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				baza.save();
+			}
+		});
+		
+		btnNowaBaza = new JButton("nowa baza");
+		btnNowaBaza.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				ArrayList<String> bazy = loadBazy();
+				String[] array = bazy.toArray(new String[bazy.size()]);
+				
+				
+				String nowaBaza = JOptionPane.showInputDialog("Please input mark for test 1: ");
+				baza = new BazaPytan(nowaBaza);
+				
+				
+				
+			}
+		});
+		toolBar.add(btnNowaBaza);
+		toolBar.add(btnZapiszbaze);
 		toolBar.add(button_1);
 		
 		Button button = new Button("Nowe pytanie");

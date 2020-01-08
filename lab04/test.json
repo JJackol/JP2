@@ -1,9 +1,1 @@
-{"baza":
-[{"poprawna":"A",
-"A":"aaa",
-"B":"bbb",
-"C":"ccc",
-"D":"ddd",
-"nazwa":"pytanie",
-"tresc":"???"},
-{"poprawna":"A","A":"aaa","B":"bbb","C":"ccc","D":"ddd","nazwa":"pytanie2","tresc":"???"}]}
+{"baza":[{"poprawna":"A","A":"aaaklkjk","B":"bbb","C":"ccc","D":"ddd","nazwa":"pytanie9","tresc":"nowa tresc?"},{"poprawna":"A","A":"aaa","B":"bbb","C":"ccc","D":"ddd","nazwa":"pytanie2","tresc":"???"},{"poprawna":"B","A":"a","B":"beeelo","C":"c","D":"d","nazwa":"pytanie4","tresc":"???"},{"poprawna":"A","A":"a","B":"b","C":"c","D":"d","nazwa":"pytanie3","tresc":"?k\nk\nk\nk\nk\nk?"}]}

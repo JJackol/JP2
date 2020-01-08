@@ -66,6 +66,8 @@ public class BazaPytan {
 				e.printStackTrace();
 			}
 		} catch (FileNotFoundException e) {
+			BazaPytan nowa = new BazaPytan(nazwaBazy);
+			nowa.save();
 			e.printStackTrace();
 		} catch (IOException e1) {
 			e1.printStackTrace();

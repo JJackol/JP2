@@ -1,11 +1,20 @@
 package lab04;
 
 import java.awt.EventQueue;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
+import java.util.Scanner;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -15,6 +24,8 @@ import java.awt.Button;
 import javax.swing.JLabel;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JTextPane;
 import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
@@ -22,12 +33,17 @@ import javax.swing.SwingConstants;
 
 import org.json.simple.JSONArray;
 
+
+
+import javax.swing.JButton;
+
 public class Testownik {
 	
 	BazaPytan baza;
 	Pytanie pytanie;
 	LinkedList<Pytanie> locQ;
 	int currentQ;
+	String imie;
 
 	private int goodAns = 0;
 	private int allAns = 0;
@@ -39,6 +55,9 @@ public class Testownik {
 	JRadioButton radioButtonB;
 	JRadioButton radioButtonC;
 	JRadioButton radioButtonD;
+
+	JDialog koniecD;
+	JDialog wybierzD;
 	
 	//JTextArea trescP;
 	
@@ -52,22 +71,48 @@ public class Testownik {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
+				String imie = "testowe imie";
+				String plikBazy = "test.json";
+				if (args.length==2) {
+					imie = args[0];
+					plikBazy = args[1];
+				}
+				
 				try {
-					Testownik window = new Testownik();
+
+					Testownik window = new Testownik(imie, plikBazy);
+					window.wybierzD.setVisible(true);
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
-				}
+				} 
+				
 			}
 		});
 	}
 	Random rand ;
+	private JButton btnNewButton;
+	private JButton btnNewButton_1;
 	public Testownik() {
 		
 		baza = new BazaPytan("test.json",true);
 		locQ = new LinkedList<Pytanie>(baza.getPytania());
+		//pytanie 
+		
+		rand = new Random();
+
+		initialize();
+		test();
+	}
+
+	public Testownik(String imie, String plikBazy) {	
+		baza = new BazaPytan(plikBazy,true);
+		locQ = new LinkedList<Pytanie>(baza.getPytania());
+		
+		this.imie = imie;
 		//pytanie 
 		
 		rand = new Random();
@@ -105,7 +150,29 @@ public class Testownik {
 		rdbtnD.setText("");
 		
 	}
-
+	
+	ArrayList<String> loadBazy() {
+		//String[] lista;
+		ArrayList<String> listaBaz = new ArrayList<String>();
+		try
+		{
+			File f = new File("Bazy.csv");
+			Scanner s = new Scanner(f);
+			String str;
+	        while(s.hasNextLine()){
+	            str = s.nextLine();
+	            if (!str.isEmpty())
+	            	listaBaz.add(str);
+					//comboBox.add(Component(String name = new String(str););
+	        }
+	        s.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return listaBaz;
+	}
+	
 	private void initialize() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 450, 300);
@@ -115,7 +182,43 @@ public class Testownik {
 		frame.getContentPane().add(panel, BorderLayout.CENTER);
 		panel.setLayout(new BorderLayout(0, 0));
 		
+		koniecD = new JDialog(this.frame, "Koniec");
+		//JLabel label = new JLabel("Please wait...");
+		koniecD.setLocationByPlatform(true);
+		koniecD.setTitle("Wynik");
 		
+		btnNewButton_1 = new JButton("New button");
+		//koniecD.getContentPane().add(btnNewButton_1, BorderLayout.NORTH);
+		//koniecD.getContentPane().add(label);
+		//koniecD.pack();
+		
+		///////wybierzD		
+		wybierzD = new JDialog(this.frame, "wybiezr baze");
+		//JLabel label = new JLabel("wybiezr baze");
+		
+//		ArrayList<String> bazy = loadBazy();
+//		String[] array = bazy.toArray(new String[bazy.size()]);
+//		
+//		JComboBox<String> comboBox = new JComboBox( array );
+//		comboBox.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent arg0) {
+//				String plik = (String) comboBox.getSelectedItem();
+//				baza = new BazaPytan(plik, true);
+//			}
+//		});
+//		wybierzD.getContentPane().add(comboBox);
+//		
+//		btnNewButton = new JButton("wybierz");
+//		btnNewButton.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//			}
+//		});
+//		
+//		wybierzD.getContentPane().add(btnNewButton, BorderLayout.SOUTH);
+//		wybierzD.setLocationByPlatform(true);
+//		wybierzD.setTitle("wybiezr baze");
+//		//wybierzD.add(label);
+//		wybierzD.pack();
 		
 		//trescP = new JTextPane();
 		//trescP = new JTextArea();
@@ -195,6 +298,48 @@ public class Testownik {
 				}
 				else {
 					System.out.println("koniec"+ goodAns +" "+ allAns);
+					int proc = goodAns*100/allAns;
+					StringBuilder wynikStr = new StringBuilder();
+					wynikStr.append(proc);
+					wynikStr.append(",");
+					wynikStr.append(imie);
+					try (BufferedWriter writer = new BufferedWriter(
+                            new FileWriter("Wyniki.csv", true)  )
+						) {
+						writer.newLine();   //Add new line
+					    writer.write(wynikStr.toString());
+					    writer.close();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					//koniecD.
+
+					StringBuilder msg = new StringBuilder("twoj wynik to ");
+					msg.append(proc);
+					msg.append("%\n");
+					JLabel label = new JLabel(msg.toString());
+					JButton closeBtn = new JButton("Zamknij");
+					closeBtn.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent arg0) {
+							System.exit(0);
+						}
+
+
+					});
+					
+					koniecD.add(closeBtn, BorderLayout.SOUTH);
+					koniecD.setLocationByPlatform(true);
+					koniecD.setTitle("Koniec");
+					koniecD.getContentPane().add(label);
+					koniecD.pack();
+					koniecD.setVisible(true);
+					
+					//todo wyniki
+				    ;  
+					
+					//System.exit(0);
+					
 				}
 					
 				
