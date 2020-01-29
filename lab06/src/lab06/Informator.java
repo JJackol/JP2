@@ -1,6 +1,8 @@
 package lab06;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -44,13 +46,12 @@ public class Informator implements Runnable {
 				while (true) {
 					Socket s = serverSocket.accept();
 					PrintWriter pw = new PrintWriter(s.getOutputStream());
-					InputStreamReader sc = new InputStreamReader(s.getInputStream());
-					
-					
-					
-					char[] buf = new char[256];
-					sc.read(buf);
-					System.out.println(String.valueOf(buf));
+					//InputStreamReader sc = new InputStreamReader(s.getInputStream());
+
+					DataInputStream in = new DataInputStream(new BufferedInputStream(s.getInputStream()));
+										String input = in.readLine();
+				
+					System.out.println(input);
 					s.close();
 				}
 			}catch(Exception e) {

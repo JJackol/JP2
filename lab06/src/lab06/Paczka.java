@@ -10,7 +10,7 @@ public class Paczka {
 	public long idfrom;
 	public long idto;
 	
-	public Paczka(String imieFrom, String imieTo, String telFrom, String telTo, String msg,long idfrom, long idto) {
+	public Paczka(String imieFrom, String telFrom, String imieTo, String telTo, String msg,long idfrom, long idto) {
 		super();
 		this.imieFrom = imieFrom;
 		this.imieTo = imieTo;

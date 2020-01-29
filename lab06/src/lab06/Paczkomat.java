@@ -1,7 +1,9 @@
 package lab06;
 
 import java.awt.EventQueue;
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -33,6 +35,7 @@ public class Paczkomat implements Runnable {
     OutputStream info ;
     InputStream in ;
     Random random;
+    PaczkomatWindow window;
     
 	public Paczkomat() {
 		super();
@@ -52,26 +55,28 @@ public class Paczkomat implements Runnable {
 			e.printStackTrace();
 		}
 		
+	}
+	public Paczkomat(PaczkomatWindow w) {
+		super();
+		window = w;
+		random = new Random();
+		id = random.nextInt(1000);
+		InetSocketAddress informatorAddr = new InetSocketAddress(hostInfo, portInfo);
+		InetSocketAddress centrAddr = new InetSocketAddress(hostCentr, portCentr);
 		
-		//register(id);
-//		try {
-//			
-//			socketInfo = new Socket(InetAddress.getByName(hostInfo), portInfo);
-//			
-//			out = socketInfo.getOutputStream();			
-//			String test = "test_paczkomatu";
-//				
-//			out.write( test.getBytes(), 0, test.length());
-//			out.flush();
-//			
-//			PrintWriter pw = new PrintWriter(socketInfo.getOutputStream());
-//			pw.write("test_paczkomatu".toCharArray());
-//			
-//			socketInfo.close();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		try {
+			myServerSocket = new ServerSocket(0);
+			myPort = myServerSocket.getLocalPort();
+			
+			Thread t = new Thread(this);
+			t.start();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Thread odbiur = new Thread(this);
+		odbiur.start();
+		
 		
 	}
 	
@@ -87,6 +92,7 @@ public class Paczkomat implements Runnable {
 		builder.append(paczka.telTo);
 		builder.append(",");
 		builder.append(paczka.msg);
+		builder.append("\n");
 		
 		try {	
 			socketInfo = new Socket(InetAddress.getByName(hostInfo), portInfo);			
@@ -95,7 +101,7 @@ public class Paczkomat implements Runnable {
 			Socket socket = new Socket(InetAddress.getByName(host), port);
 			out = socket.getOutputStream();		
 			
-			in = socketCentr.getInputStream();
+			//in = socketCentr.getInputStream();
 				
 			out.write( builder.toString().getBytes(), 0, builder.length());
 			out.flush();
@@ -120,25 +126,23 @@ public class Paczkomat implements Runnable {
 		byte[] buf = new byte[256];
 		StringBuilder builder = new StringBuilder("getId,");
 		builder.append(_id);
+		builder.append("\n");
 		try {			
 			socketInfo = new Socket(InetAddress.getByName(hostInfo), portInfo);			
 			info = socketInfo.getOutputStream();	
 			
 			socketCentr = new Socket(InetAddress.getByName(hostCentr), portCentr);
 			out = socketCentr.getOutputStream();		
-			
-			in = socketCentr.getInputStream();
-				
+		
 			out.write( builder.toString().getBytes(), 0, builder.length());
 			out.flush();
 			info.write( builder.toString().getBytes(), 0, builder.length());
 			info.flush();
 			
-			String verify = new String();
-			while(in.read(buf)>0) {	
-				verify += String.valueOf(buf);
-				
-			}
+			DataInputStream in = new DataInputStream(new BufferedInputStream(socketCentr.getInputStream()));
+
+			String verify = in.readLine();
+			
 			int t_port = Integer.parseInt(verify.trim());
 			if(t_port>0) {
 				return t_port;				
@@ -165,6 +169,7 @@ public class Paczkomat implements Runnable {
 		builder.append(_id);
 		builder.append(",");
 		builder.append(myPort);
+		builder.append("\n");
 		try {			
 			socketInfo = new Socket(InetAddress.getByName(hostInfo), portInfo);			
 			info = socketInfo.getOutputStream();	
@@ -172,22 +177,24 @@ public class Paczkomat implements Runnable {
 			socketCentr = new Socket(InetAddress.getByName(hostCentr), portCentr);
 			out = socketCentr.getOutputStream();		
 			
-			in = socketCentr.getInputStream();
-				
+			//in = socketCentr.getInputStream();
+
+			
 			out.write( builder.toString().getBytes(), 0, builder.length());
 			out.flush();
 			info.write( builder.toString().getBytes(), 0, builder.length());
 			info.flush();
 			
-			//int inSize = ;
+			DataInputStream in = new DataInputStream(
+					new BufferedInputStream(socketCentr.getInputStream()));
 			
-			String verify = new String();
-			while(in.read(buf)>0) {	
-				verify += String.valueOf(buf);
-				if(verify.equals("ok")) {
-					isRegistered = true;	
-				}
+			
+			
+			String verify = in.readLine();			
+			if(verify != null && verify.equals("ok\n")) {
+				isRegistered = true;	
 			}
+			
 			
 			//PrintWriter pw = new PrintWriter(socketInfo.getOutputStream());
 			//pw.write("test_paczkomatu".toCharArray());
@@ -211,7 +218,7 @@ public class Paczkomat implements Runnable {
 	public void run() {
 		
 		InputStreamReader sc;
-		char[] buf = new char[256];
+		
 		
 		try {
         	while(true) {
@@ -219,45 +226,28 @@ public class Paczkomat implements Runnable {
             		
             	//socketCentr = new Socket(InetAddress.getByName(hostCentr), portCentr);
     			OutputStream out = s.getOutputStream();		
-    			
-    	
-				sc = new InputStreamReader(s.getInputStream());
+    			DataInputStream in = new DataInputStream(new BufferedInputStream(s.getInputStream()));
+				
+				String input = in.readLine();
+				System.out.println(input);
+				window.refreshBufor(input);
+				
+				String[] data = input.split(",");	
+				
+//				switch(data[0]) {
+//				case "getId":
+//					if(null != null ) {}					
+//				case "register":					
+//					break;					
+//				default:;
 			
-				
-				sc.read(buf);
-				String input = new String(buf);
-				String[] data = input.split(",");
-				
-				switch(data[0]) {
-
-				case "getId":
-					if(null != null ) {
-						//todo
-					}
-					break;
-				case "register":
-					if (true){
-						out.write("ok".getBytes());
-						out.flush();
-					}
-					else {
-						;
-					}
-					break;
-					
-				default:;
-						
-				}
-				
-					
 				s.close();
-        	}
+			}
+					
+				
+        }
 			
-            //System.out.println("Server started on port " + serverSocket.getLocalPort() + "...");
-            //System.out.println("Waiting for client...");
-            // wait until client socket connecting, then add new thread
-            //addThreadClient(serverSocket.accept());
-        } catch (IOException e) {
+        catch (IOException e) {
             System.out.println("Error : " + e);
         }	
 		

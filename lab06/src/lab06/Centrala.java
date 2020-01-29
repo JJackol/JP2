@@ -1,5 +1,7 @@
 package lab06;
 
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -61,15 +63,12 @@ public class Centrala implements Runnable {
 	    			
 	    			
 					PrintWriter pw = new PrintWriter(s.getOutputStream());
-					InputStreamReader sc = new InputStreamReader(s.getInputStream());
+					DataInputStream in = new DataInputStream(new BufferedInputStream(s.getInputStream()));
+					//InputStreamReader sc = new InputStreamReader(s.getInputStream());
 					System.out.println("got client");
 					
-					char[] buf = new char[256];
-					while(!sc.ready()) {
-						Thread.yield();
-					}
-					sc.read(buf);
-					String input = new String(buf);
+					
+					String input = in.readLine();
 					String[] data = input.split(",");
 					
 					switch(data[0]) {
@@ -77,13 +76,13 @@ public class Centrala implements Runnable {
 					case "getId":
 						int dest = tryGetPort(data[1]);
 						if( dest > 0 ) {
-							out.write(String.valueOf(dest).getBytes());
+							out.write((String.valueOf(dest)+"\n").getBytes());
 							out.flush();
 						}
 						break;
 					case "register":
 						if (register(data[1], data[2])){
-							out.write("ok".getBytes());
+							out.write("ok\n".getBytes());
 							out.flush();
 						}
 						else {
@@ -113,6 +112,7 @@ public class Centrala implements Runnable {
     	int getId = Integer.parseInt(string);
     	for(PaczkomatData d : lista) {
     		if(d.id == getId)
+    			System.out.println("zwracam:" + d.id + " slucha na porcie: " + d.port);
     			return d.port;
     	}
 		return null;
@@ -127,6 +127,7 @@ public class Centrala implements Runnable {
     	}
 
 		lista.add(new PaczkomatData(newId, destport));
+		System.out.println("zarejestrowano:" + newId + " na porcie: " + destport);
 		return true;
 	}
 

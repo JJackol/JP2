@@ -5,9 +5,14 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import java.awt.BorderLayout;
+import java.awt.Component;
+
 import javax.swing.JPanel;
 import javax.swing.BoxLayout;
 import java.awt.GridLayout;
+import java.awt.Label;
+import java.awt.TextArea;
+
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JSpinner;
@@ -15,6 +20,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.LinkedList;
+import java.util.Vector;
+
+import javax.swing.JList;
+import javax.swing.JTextArea;
 
 public class PaczkomatWindow {
 	Paczkomat p;
@@ -25,7 +35,9 @@ public class PaczkomatWindow {
 	private JTextField textField_1;
 	private JTextField txtDo;
 	private JTextField txtDo_1;
-
+	private JList jlist;
+	private LinkedList<String> buff = new LinkedList<String>();
+	JTextArea txtrBufor = new JTextArea();
 	/**
 	 * Launch the application.
 	 */
@@ -46,7 +58,7 @@ public class PaczkomatWindow {
 	 * Create the application.
 	 */
 	public PaczkomatWindow() {
-		p = new Paczkomat();
+		p = new Paczkomat(this);
 		initialize();
 
 		frame.setVisible(true);
@@ -59,7 +71,7 @@ public class PaczkomatWindow {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
+		frame.setBounds(100, 100, 542, 475);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
@@ -94,7 +106,7 @@ public class PaczkomatWindow {
 						0, 0));
 			}
 		});
-		btnWylij.setBounds(98, 178, 117, 25);
+		btnWylij.setBounds(95, 139, 117, 25);
 		frame.getContentPane().add(btnWylij);
 		
 		JLabel lblTresc = new JLabel("Tresc");
@@ -107,11 +119,11 @@ public class PaczkomatWindow {
 		textMsg.setColumns(10);
 		
 		JSpinner spinner = new JSpinner();
-		spinner.setBounds(406, 181, 28, 20);
+		spinner.setBounds(498, 12, 28, 20);
 		frame.getContentPane().add(spinner);
 		
 		JLabel lblIdPaczkomatu = new JLabel("ID paczkomatu");
-		lblIdPaczkomatu.setBounds(293, 183, 114, 15);
+		lblIdPaczkomatu.setBounds(385, 14, 114, 15);
 		frame.getContentPane().add(lblIdPaczkomatu);
 		
 		JButton btnZarejestrujPaczkomat = new JButton("Zarejestruj paczkomat");
@@ -122,7 +134,7 @@ public class PaczkomatWindow {
 					p.register((int) spinner.getValue());
 			}
 		});
-		btnZarejestrujPaczkomat.setBounds(293, 209, 141, 49);
+		btnZarejestrujPaczkomat.setBounds(385, 40, 141, 49);
 		frame.getContentPane().add(btnZarejestrujPaczkomat);
 		
 		JLabel lblIdCelu = new JLabel("Id celu");
@@ -154,5 +166,25 @@ public class PaczkomatWindow {
 		JLabel lblDo = new JLabel("DO:");
 		lblDo.setBounds(252, 0, 70, 15);
 		frame.getContentPane().add(lblDo);
+		
+		jlist = new JList();
+		jlist.setBounds(33, 182, 481, 239);
+		frame.getContentPane().add(jlist);
+		
+		
+		txtrBufor.setText("bufor");
+		//txtrBufor.setBounds(12, 181, 213, 77);
+		frame.getContentPane().add(txtrBufor);
+		txtrBufor.setText("");
+		txtrBufor.setEditable(false);
+		
+			
+	}
+
+	public void refreshBufor(String input) {
+		buff.add(input);
+		jlist.setListData(new Vector<String>(buff));
+		//txtrBufor.setText(txtrBufor.getText()+input);
+		
 	}
 }
