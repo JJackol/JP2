@@ -9,17 +9,20 @@ import java.io.Reader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Date;
+import java.util.LinkedList;
 
 public class Informator implements Runnable {
 
     private int port = 7777;
     private ServerSocket serverSocket = null;
     private Thread thread = null;
+    private LinkedList<String> stringBuffer;
     
     public Informator() {
+    	stringBuffer = new LinkedList<String>();
     	try {
             serverSocket = new ServerSocket(port);
-            System.out.println("Server started on port " + serverSocket.getLocalPort() + "...");
+            System.out.println("Informator started on port " + serverSocket.getLocalPort() + "...");
             System.out.println("Waiting for client...");
             thread = new Thread(this);
             thread.start();
@@ -29,9 +32,7 @@ public class Informator implements Runnable {
 	}
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		Thread infT = new Thread( new Informator() );
-		infT.start();
+		Informator informator = new Informator();
 		
 
 	}
@@ -44,14 +45,12 @@ public class Informator implements Runnable {
 					Socket s = serverSocket.accept();
 					PrintWriter pw = new PrintWriter(s.getOutputStream());
 					InputStreamReader sc = new InputStreamReader(s.getInputStream());
-					System.out.println("got client");
 					
-						char[] buf = new char[256];
-						sc.read(buf);
-						System.out.println(new String(buf));
 					
-					pw.println("Hello There!");
-					pw.println("Goodbye now.");
+					
+					char[] buf = new char[256];
+					sc.read(buf);
+					System.out.println(String.valueOf(buf));
 					s.close();
 				}
 			}catch(Exception e) {
